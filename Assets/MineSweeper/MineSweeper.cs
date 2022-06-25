@@ -12,7 +12,12 @@ public class MineSweeper : MonoBehaviour
     [SerializeField] bool _isView = false;
     [SerializeField] GridLayoutGroup _gridLayoutGroup = null;
     [SerializeField] Cell _cellPrefab = null;
+    [SerializeField] Text _timeText = null;
 
+    int _currentFlagCount = 0;
+    float _gameTime = 0;
+    bool _isGame = true;
+    bool _isTimerStart = false;
     Cell[,] _cells;
     private void Start()
     {
@@ -29,7 +34,7 @@ public class MineSweeper : MonoBehaviour
                 _cells[r, c] = cell;
             }
         }
-      
+
         for (var i = 0; i < _mineCount; i++)
         {
             var r = Random.Range(0, _rows);
@@ -50,25 +55,96 @@ public class MineSweeper : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetButtonDown("Fire1"))
+        var screenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, Input.mousePosition);
+        Ray ray = Camera.main.ScreenPointToRay(screenPos);
+        RaycastHit2D hit = Physics2D.Raycast((Vector2)ray.origin, (Vector2)ray.direction);
+
+        if (_isGame)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast((Vector2)ray.origin, (Vector2)ray.direction);
-            if (hit)
+            if (Input.GetButtonDown("Fire1") && hit)   //セルを開ける
             {
-                Debug.Log(hit.collider.name);
+                if (!_isTimerStart) _isTimerStart = true;
+                var cell = hit.collider.gameObject.GetComponent<Cell>();
+                GameOver(cell.OpenCell());
+                GameClearCheck();
+            }
+            else if (Input.GetButtonDown("Fire2") && hit)  //旗を立てる
+            {
+                if (!_isTimerStart) _isTimerStart = true;
+                var cell = hit.collider.gameObject.GetComponent<Cell>();
+                var Image = hit.collider.gameObject.GetComponent<Image>();
+                
+                if (cell.IsFlag)
+                {
+                    cell.IsFlag = false;
+                    Image.color = Color.white;
+                }
+                else
+                {
+                    cell.IsFlag = true;
+                    Image.color = Color.red;
+                }
+               
+                GameClearCheck();
+            }
+
+            if (_isTimerStart)
+            {
+                _gameTime += Time.deltaTime;
+                _timeText.text = _gameTime.ToString();
             }
         }
-        else if (Input.GetButtonDown("Fire2"))
+
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast((Vector2)ray.origin, (Vector2)ray.direction);
-            if (hit)
+            foreach (var cell in _cells)
             {
-                Destroy(hit.collider.gameObject);
+                cell.SetView(!_isView);
             }
+
+            _isView = !_isView;
         }
     }
+
+    private void GameClearCheck()
+    {
+        foreach (var cell in _cells)
+        {
+            if (cell.CellState == CellState.Mine && cell.IsFlag)
+            {
+                _currentFlagCount++;
+                continue;
+            }
+
+            if (cell.IsOpen == false)
+            {
+                _currentFlagCount = 0;
+                return;
+            }
+        }
+
+        if (_currentFlagCount == _mineCount)
+        {
+            GameClear();
+        }
+    }
+
+    private void GameClear()
+    {
+        _isTimerStart = false;
+        _isGame = false;
+        Debug.Log("クリア");
+    }
+
+    private void GameOver(bool gameover)
+    {
+        if (gameover)
+        {
+            Debug.Log("失敗");
+            _isGame = false;
+        }
+    }
+    
 
     private void SetMineCount(int r, int c)
     {
@@ -122,7 +198,7 @@ public class MineSweeper : MonoBehaviour
             cell.CellState = CellState.Count;
         }
 
-        if (r + 1 < _rows &&  c + 1 < _columns) //右下
+        if (r + 1 < _rows && c + 1 < _columns) //右下
         {
             var cell = _cells[r + 1, c + 1];
             cell.MineCount++;

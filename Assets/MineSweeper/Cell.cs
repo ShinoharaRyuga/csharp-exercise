@@ -10,6 +10,8 @@ public class Cell : MonoBehaviour
     Image _cellImage => GetComponent<Image>();
     int _mineCount = 0;
     bool _isView = false;
+    bool _isOpen = false;
+    bool _isFlag = false;
     public CellState CellState
     {
         get => _cellState;
@@ -21,15 +23,12 @@ public class Cell : MonoBehaviour
     }
 
     public int MineCount { get => _mineCount; set => _mineCount = value; }
+    public bool IsOpen { get => _isOpen; set => _isOpen = value; }
+    public bool IsFlag { get => _isFlag; set => _isFlag = value; }
 
     void Start()
     {
         OnCellStateChanged();
-
-        if (!_isView)
-        {
-            _view .enabled = false;
-        }
     }
 
     private void OnValidate()
@@ -57,15 +56,24 @@ public class Cell : MonoBehaviour
         }
     }
 
-    public void OpenCell()
+    public bool OpenCell()
     {
         _cellImage.enabled = false;
         _view.enabled = true;
+
+        if (CellState == CellState.Mine)
+        {
+            return true;
+        }
+
+        _isOpen = true;
+
+        return false;
     }
 
     public void SetView(bool isView)
     {
-        _isView = isView;
+        _view.enabled = isView;
     }
 }
 
