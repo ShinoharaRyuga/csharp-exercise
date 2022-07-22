@@ -323,8 +323,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rows: 10
   _columns: 10
-  _mineCount: 8
-  _viewMode: 2
+  _mineCount: 100
+  _viewMode: 0
   _gridLayoutGroup: {fileID: 982833026}
   _cellPrefab: {fileID: 1429797709469563331, guid: 8020ab1f9fe39c5418a7c93a95006862, type: 3}
   _timeText: {fileID: 1674099842}

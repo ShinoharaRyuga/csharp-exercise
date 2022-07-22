@@ -60,7 +60,7 @@ public class MineSweeper : MonoBehaviour
             if (Input.GetButtonDown("Fire1") && hit)   //セルを開ける
             {
                 var cell = hit.collider.gameObject.GetComponent<Cell>();
-     
+
                 if (_isfirst)
                 {
                     _isTimerStart = true;
@@ -75,14 +75,14 @@ public class MineSweeper : MonoBehaviour
                 var endFlag = cell.OpenCell();
                 if (!endFlag)
                 {
-                    AroundCell(cell);
+                    AroundCellOpen(cell);
                 }
                 else
                 {
                     GameOver(endFlag);
                 }
-               
-                
+
+
                 GameClearCheck();
             }
             else if (Input.GetButtonDown("Fire2") && hit)  //旗を立てる
@@ -90,7 +90,7 @@ public class MineSweeper : MonoBehaviour
                 if (!_isTimerStart) _isTimerStart = true;
                 var cell = hit.collider.gameObject.GetComponent<Cell>();
                 var Image = hit.collider.gameObject.GetComponent<Image>();
-                
+
                 if (cell.IsFlag)
                 {
                     cell.IsFlag = false;
@@ -101,7 +101,7 @@ public class MineSweeper : MonoBehaviour
                     cell.IsFlag = true;
                     Image.color = Color.red;
                 }
-               
+
                 GameClearCheck();
             }
 
@@ -112,7 +112,7 @@ public class MineSweeper : MonoBehaviour
             }
         }
 
-     
+
         if (Input.GetKeyDown(KeyCode.C))    //リトライ　デバッグ用
         {
             ResetMinePos();
@@ -210,7 +210,7 @@ public class MineSweeper : MonoBehaviour
             cell.ResetState();
         }
     }
-    
+
     /// <summary>地雷の数を数える </summary>
     /// <param name="r"></param>
     /// <param name="c"></param>
@@ -274,9 +274,13 @@ public class MineSweeper : MonoBehaviour
         }
     }
 
-        /// <summary>開いたセルの周囲八マスを開ける </summary>
-        /// <param name="target"></param>
-    private void AroundCell(Cell target)
+    /// <summary>
+    /// 開いたセルの周囲八マスを開ける 
+    /// 更に開いたセルが空だったら周囲八マスのセルを開ける
+    /// 再起呼びたし
+    /// </summary>
+    /// <param name="target"></param>
+    private void AroundCellOpen(Cell target)
     {
         if (target.CellState == CellState.Count) return;
 
@@ -286,240 +290,82 @@ public class MineSweeper : MonoBehaviour
         if (0 <= r - 1) //上
         {
             var cell = _cells[r - 1, c];
-            var nextOpenCell = cell.GetNextOpenCell();
-            if (nextOpenCell != null)
-            {
-                OpenAroundCell(nextOpenCell, Direction.Up);
-            }
-        }
 
-        if (0 <= r - 1 && 0 <= c - 1)   //左上
-        {
-            var cell = _cells[r - 1, c - 1];
-            var nextOpenCell = cell.GetNextOpenCell();
-            if (nextOpenCell != null)
+            if (!cell.IsOpen)
             {
-                OpenAroundCell(nextOpenCell, Direction.UpperLeft);
+                cell.OpenCell();
+                AroundCellOpen(cell);
             }
         }
 
         if (0 <= r - 1 && c + 1 < _columns) //右上
         {
             var cell = _cells[r - 1, c + 1];
-            var nextOpenCell = cell.GetNextOpenCell();
-            if (nextOpenCell != null)
+
+            if (!cell.IsOpen)
             {
-                OpenAroundCell(nextOpenCell, Direction.UpperRight);
+                cell.OpenCell();
+                AroundCellOpen(cell);
             }
         }
 
         if (0 <= c - 1) //左
         {
             var cell = _cells[r, c - 1];
-            var nextOpenCell = cell.GetNextOpenCell();
-            if (nextOpenCell != null)
+
+            if (!cell.IsOpen)
             {
-                OpenAroundCell(nextOpenCell, Direction.Left);
+                cell.OpenCell();
+                AroundCellOpen(cell);
             }
         }
 
         if (c + 1 < _columns)   //右
         {
             var cell = _cells[r, c + 1];
-            var nextOpenCell = cell.GetNextOpenCell();
-            if (nextOpenCell != null)
+
+            if (!cell.IsOpen)
             {
-                OpenAroundCell(nextOpenCell, Direction.Right);
+                cell.OpenCell();
+                AroundCellOpen(cell);
             }
         }
 
         if (r + 1 < _rows && 0 <= c - 1) //左下
         {
             var cell = _cells[r + 1, c - 1];
-            var nextOpenCell = cell.GetNextOpenCell();
-            if (nextOpenCell != null)
+
+            if (!cell.IsOpen)
             {
-                OpenAroundCell(nextOpenCell, Direction.BottomLeft);
+                cell.OpenCell();
+                AroundCellOpen(cell);
             }
         }
 
         if (r + 1 < _rows) //下
         {
             var cell = _cells[r + 1, c];
-            var nextOpenCell = cell.GetNextOpenCell();
-            if (nextOpenCell != null)
+
+            if (!cell.IsOpen)
             {
-                OpenAroundCell(nextOpenCell, Direction.Down);
+                cell.OpenCell();
+                AroundCellOpen(cell);
             }
         }
 
         if (r + 1 < _rows && c + 1 < _columns) //右下
         {
             var cell = _cells[r + 1, c + 1];
-            var nextOpenCell = cell.GetNextOpenCell();
-            if (nextOpenCell != null)
+
+            if (!cell.IsOpen)
             {
-                OpenAroundCell(nextOpenCell, Direction.BottomRight);
+                cell.OpenCell();
+                AroundCellOpen(cell);
             }
         }
     }
 
-    /// <summary>指定された方向を掘り進めていく </summary>
-    private void OpenAroundCell(Cell target, Direction direction)
-    {
-        var r = target.Row;
-        var c = target.Column;
-        Cell nextCell = null;   //次に開ける周囲八マスの中心
-        var isCount = false;     //自身のセルに数字が書かれているかどうか
 
-        if (0 <= r - 1 && c + 1 < _columns) //右上
-        {
-            var cell = _cells[r - 1, c + 1];
-            var next = cell.GetNextOpenCell();
-
-            if (direction == Direction.UpperRight)
-            {
-                nextCell = next;
-                direction = Direction.UpperRight;
-            }
-
-            if (nextCell == null)
-            {
-                isCount = true;
-            }
-        }
-
-        if (0 <= r - 1) //上
-        {
-            var cell = _cells[r - 1, c];
-            var next = cell.GetNextOpenCell();
-
-            if (direction == Direction.Up)
-            {
-                nextCell = next;
-                direction = Direction.Up;
-            }
-
-            if (nextCell == null)
-            {
-                isCount = true;
-            }
-        }
-
-        if (0 <= r - 1 && 0 <= c - 1)   //左上
-        {
-            var cell = _cells[r - 1, c - 1];
-            var next = cell.GetNextOpenCell();
-
-            if (direction == Direction.UpperLeft)
-            {
-                nextCell = next;
-            }
-
-            if (nextCell == null)
-            {
-                isCount = true;
-            }
-        }
-
-        if (0 <= c - 1) //左
-        {
-            var cell = _cells[r, c - 1];
-            var next = cell.GetNextOpenCell();
-
-            if (direction == Direction.Left)
-            {
-                nextCell = next;
-            }
-
-            if (nextCell == null)
-            {
-                isCount = true;
-            }
-        }
-
-        if (c + 1 < _columns)   //右
-        {
-            var cell = _cells[r, c + 1];
-            var next = cell.GetNextOpenCell();
-
-            if (direction == Direction.Right)
-            {
-                nextCell = next;
-            }
-
-            if (nextCell == null)
-            {
-                isCount = true;
-            }
-        }
-
-        if (r + 1 < _rows && 0 <= c - 1) //左下
-        {
-            var cell = _cells[r + 1, c - 1];
-            var next = cell.GetNextOpenCell();
-
-            if (direction == Direction.BottomLeft)
-            {
-                nextCell = next;
-            }
-
-            if (nextCell == null)
-            {
-                isCount = true;
-            }
-        }
-
-        if (r + 1 < _rows) //下
-        {
-            var cell = _cells[r + 1, c];
-            var next = cell.GetNextOpenCell();
-
-            if (direction == Direction.Down)
-            {
-                nextCell = next;
-            }
-
-            if (nextCell == null)
-            {
-                isCount = true;
-            }
-        }
-
-        if (r + 1 < _rows && c + 1 < _columns) //右下
-        {
-            var cell = _cells[r + 1, c + 1];
-            var next = cell.GetNextOpenCell();
-
-            if (direction == Direction.BottomRight)
-            {
-                nextCell = next;
-            }
-
-            if (nextCell == null)
-            {
-                isCount = true;
-            }
-        }
-
-        if (!isCount)
-        {
-            OpenAroundCell(nextCell, direction);
-        }
-    }
-}
-
-/// <summary>掘り進める方向 </summary>
-public enum Direction
-{
-    Up = 0,             //上
-    UpperRight = 1,     //右上
-    Right = 2,          //右
-    BottomRight = 3,    //右下
-    Down = 4,           //下
-    BottomLeft = 5,     //?左下
-    Left = 6,           //?左
-    UpperLeft = 7,      //?左上
 }
 
 public enum ViewMode
