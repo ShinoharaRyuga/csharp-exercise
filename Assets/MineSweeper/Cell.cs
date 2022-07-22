@@ -14,7 +14,6 @@ public class Cell : MonoBehaviour
     int _mineCount = 0;
     int _row = 0;
     int _column = 0;
-    bool _isView = false;
     bool _isOpen = false;
     bool _isMine = false;
     /// <summary>自身に旗が立っているかどうか </summary>
@@ -30,10 +29,10 @@ public class Cell : MonoBehaviour
         }
     }
 
-    
     public int MineCount { get => _mineCount; set => _mineCount = value; }
     public bool IsOpen { get => _isOpen; set => _isOpen = value; }
     public bool IsFlag { get => _isFlag; set => _isFlag = value; }
+    public bool IsMine => CellState == CellState.Mine;
     public int Row { get => _row; set => _row = value; }
     public int Column { get => _column; set => _column = value; }
 
@@ -74,29 +73,54 @@ public class Cell : MonoBehaviour
     {
         _cellImage.enabled = false;
         _view.enabled = true;
-
+        _isOpen = true;
         if (CellState == CellState.Mine)
         {
             return true;
         }
 
-        _isOpen = true;
-
         return false;
     }
 
-    public void OpenCell(Cell cell)
+    /// <summary>自身のセルを開けてステータスがカウントでなければ自身のセルを返す </summary>
+    public Cell GetNextOpenCell()
     {
-        cell._cellImage.enabled = false;
-        cell.enabled = true;
+        _cellImage.enabled = false;
+        _view.enabled = true;
         _isOpen = true;
+
+        if (_cellState == CellState.Count)
+        {
+            return null;
+        }
+
+        return this;
     }
 
     /// <summary>地雷が見えるようにする </summary>
     /// <param name="isView"></param>
-    public void SetView(bool isView)
+    public void SetView(ViewMode mode)
     {
-        _view.enabled = isView;
+        _view.enabled = false;
+
+        switch (mode)
+        {
+            case ViewMode.All:
+                _view.enabled = true;
+                break;
+            case ViewMode.MineOnly:
+                if (_cellState == CellState.Mine)
+                {
+                    _view.enabled = true;
+                }
+                break;
+            case ViewMode.Game:
+                if (_isOpen)
+                {
+                    _view.enabled = true;
+                }
+                break;
+        }
     }
 
     /// <summary>状態をリセットする </summary>
