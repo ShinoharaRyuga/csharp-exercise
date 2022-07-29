@@ -9,7 +9,7 @@ public class Cell : MonoBehaviour
 {
     [SerializeField, Tooltip("地雷の数を表示するテキスト")] Text _view = null;
     [SerializeField, Tooltip("セルの状態")] CellState _cellState = CellState.None;
-    Image _cellImage => GetComponent<Image>();
+    Image _cellCover => transform.GetChild(1).GetComponent<Image>();
     /// <summary>周囲の地雷数 </summary>
     int _mineCount = 0;
     int _row = 0;
@@ -71,7 +71,7 @@ public class Cell : MonoBehaviour
     /// <returns>true=自身が地雷 false=地雷ではない</returns>
     public bool OpenCell()
     {
-        _cellImage.enabled = false;
+        _cellCover.enabled = false;
         _view.enabled = true;
         _isOpen = true;
         if (CellState == CellState.Mine)
@@ -85,7 +85,7 @@ public class Cell : MonoBehaviour
     /// <summary>自身のセルを開けてステータスがカウントでなければ自身のセルを返す </summary>
     public Cell GetNextOpenCell()
     {
-        _cellImage.enabled = false;
+        _cellCover.enabled = false;
         _view.enabled = true;
         _isOpen = true;
 

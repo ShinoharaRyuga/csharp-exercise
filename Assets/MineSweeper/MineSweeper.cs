@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,7 +15,7 @@ public class MineSweeper : MonoBehaviour
     [SerializeField, Tooltip("セルの状態を見ることが出来る")] ViewMode _viewMode = ViewMode.Game;
     [SerializeField] GridLayoutGroup _gridLayoutGroup = null;
     [SerializeField, Tooltip("セルのプレハブ")] Cell _cellPrefab = null;
-    [SerializeField, Tooltip("経過時間を表示するテキスト")] Text _timeText = null;
+    [SerializeField, Tooltip("経過時間を表示するテキスト")] TMP_Text _timeText = null;
     int _currentFlagCount = 0;
     float _gameTime = 0;
     bool _isGame = true;
@@ -60,7 +61,7 @@ public class MineSweeper : MonoBehaviour
             if (Input.GetButtonDown("Fire1") && hit)   //セルを開ける
             {
                 var cell = hit.collider.gameObject.GetComponent<Cell>();
-
+                cell.transform.GetChild(1).GetComponent<Image>().enabled = false;
                 if (_isfirst)
                 {
                     _isTimerStart = true;
@@ -89,12 +90,12 @@ public class MineSweeper : MonoBehaviour
             {
                 if (!_isTimerStart) _isTimerStart = true;
                 var cell = hit.collider.gameObject.GetComponent<Cell>();
-                var Image = hit.collider.gameObject.GetComponent<Image>();
+                var Image = cell.transform.GetChild(1).GetComponent<Image>();
 
                 if (cell.IsFlag)
                 {
                     cell.IsFlag = false;
-                    Image.color = Color.white;
+                    Image.color = Color.blue;
                 }
                 else
                 {
