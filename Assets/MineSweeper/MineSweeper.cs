@@ -9,8 +9,8 @@ using UnityEngine.UI;
 /// </summary>
 public class MineSweeper : MonoBehaviour
 {
-    [SerializeField, Tooltip("c‚Ì’·‚³")] int _rows = 10;
-    [SerializeField, Tooltip("‰¡‚Ì’·‚³")] int _columns = 10;
+    [SerializeField, Tooltip("c‚Ì’·‚³"), Range(2, 15)] int _rows = 10;
+    [SerializeField, Tooltip("‰¡‚Ì’·‚³"), Range(2, 15)] int _columns = 10;
     [SerializeField, Tooltip("’n—‹‚Ì”")] int _mineCount = 10;
     [SerializeField, Tooltip("ƒZƒ‹‚Ìó‘Ô‚ğŒ©‚é‚±‚Æ‚ªo—ˆ‚é")] ViewMode _viewMode = ViewMode.Game;
     [SerializeField] GridLayoutGroup _gridLayoutGroup = null;
