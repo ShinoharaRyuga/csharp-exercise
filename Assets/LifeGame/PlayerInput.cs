@@ -1,8 +1,17 @@
 using UnityEngine;
+using TMPro;
 
 /// <summary>プレイヤーの入力を受け取り選択されたセルの状態を変更する </summary>
 public class PlayerInput : MonoBehaviour
 {
+    [SerializeField, Tooltip("次世代に遷移するまでの時間を受け付ける")] TMP_InputField _inputField = default;
+    LifeGameManager _gameManager => GetComponent<LifeGameManager>();
+
+    private void Start()
+    {
+        _inputField.text = _gameManager.StepTime.ToString();
+    }
+
     void Update()
     {
         var screenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, Input.mousePosition);
@@ -22,5 +31,13 @@ public class PlayerInput : MonoBehaviour
                 cell.State = LifeGameCellState.Live;
             }
         }
+    }
+
+    /// <summary>次世代に遷移するまでの時間を変更する </summary>
+    public void ChangeStepTime()
+    {
+        var stepTime = float.Parse(_inputField.text);
+        _gameManager.StepTime = stepTime;
+        _inputField.text = _gameManager.StepTime.ToString();
     }
 }

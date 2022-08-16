@@ -7,8 +7,9 @@ public class LifeGameManager : MonoBehaviour
 {
     [SerializeField, Tooltip("縦の長さ")] int _rows = 10;
     [SerializeField, Tooltip("横の長さ")] int _columns = 10;
-    [SerializeField, Tooltip("最初に生きているセルの数")] int _randomCellCount = 0;
-    [SerializeField, Tooltip("次世代に移るまで時間")] float _stapTime = 1f;
+    [SerializeField, Range(1, 480), Tooltip("ランダム生成時のセル最小数")] int _minCellCount = 1;
+    [SerializeField, Range(1, 480), Tooltip("ランダム生成時のセル最大数")] int _maxCellCount = 1;
+    [SerializeField, Tooltip("次世代に移るまで時間")] float _stepTime = 1f;
     [SerializeField, Tooltip("セルのプレハブ")] LifeGameCell _cellPrefab = null;
     [SerializeField, Tooltip("ゲームの状態を表示するテキスト")] TMP_Text _playText = default;
     [SerializeField] GridLayoutGroup _gridLayoutGroup = null;
@@ -16,6 +17,19 @@ public class LifeGameManager : MonoBehaviour
     float _time = 0f;
     /// <summary>プレイ中かどうか </summary>
     bool _isPlay = false;
+
+    public float StepTime
+    {
+        get { return _stepTime; }
+
+        set
+        {
+            if (0 < value)
+            {
+                _stepTime = value;
+            }
+        }
+    }
 
     void Start()
     {
@@ -34,8 +48,6 @@ public class LifeGameManager : MonoBehaviour
                 _cells[r, c] = cell;
             }
         }
-
-        SetLiveCell();
     }
 
     private void Update()
@@ -44,7 +56,7 @@ public class LifeGameManager : MonoBehaviour
         {
             _time += Time.deltaTime;
 
-            if (_time >= _stapTime) //指定された時間が経過したら次世代のセルにする
+            if (_time >= _stepTime) //指定された時間が経過したら次世代のセルにする
             {
                 SetNextCellState();
                 _time = 0f;
@@ -52,19 +64,29 @@ public class LifeGameManager : MonoBehaviour
         }
     }
 
-    /// <summary>最初の生きているセルを決める（ランダム） </summary>
-    public void SetLiveCell()
+    /// <summary>セルの状態を初期化する </summary>
+    public void ResetCellState()
     {
-        foreach (var cell in _cells)
+        _isPlay = false;
+
+        foreach (var cell in _cells) 
         {
             cell.State = LifeGameCellState.Die;
             cell.NextState = LifeGameCellState.Die;
         }
+    }
 
-        for (var i = 0; i < _randomCellCount;)
+    /// <summary>最初の生きているセルを決める（ランダム） </summary>
+    public void SetLiveCell()
+    {
+        ResetCellState();
+
+        var count = Random.Range(_minCellCount, _maxCellCount);
+
+        for (var i = 0; i < count;)
         {
-            var r = UnityEngine.Random.Range(0, _rows);
-            var c = UnityEngine.Random.Range(0, _columns);
+            var r = Random.Range(0, _rows);
+            var c = Random.Range(0, _columns);
             var cell = _cells[r, c];
 
             if (cell.State != LifeGameCellState.Live)
@@ -88,6 +110,11 @@ public class LifeGameManager : MonoBehaviour
         {
             cell.ChangeStep();
         }
+    }
+
+    public void RandomGenerate()
+    {
+        _playText.text = "ランダム生成しました";
     }
 
     public void PlayStart()
