@@ -30,6 +30,8 @@ public class PlayerInput : MonoBehaviour
             {
                 cell.State = LifeGameCellState.Live;
             }
+
+            Debug.Log($"r{cell.Row} c{cell.Col}");
         }
     }
 
