@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,7 +17,11 @@ public class MineSweeper : MonoBehaviour
     [SerializeField, Tooltip("セルのプレハブ")] Cell _cellPrefab = null;
     [SerializeField, Tooltip("経過時間を表示するテキスト")] TMP_Text _timeText = null;
     [SerializeField, Tooltip("ゲーム状態を標準するテキスト")] TMP_Text _playText = null;
+    [SerializeField, Tooltip("旗数を表示するテキスト")] TMP_Text _flagCountText = null;
+    /// <summary>盤面に置かれている旗数 </summary>
     int _currentFlagCount = 0;
+    /// <summary>旗の位置が合っている数 </summary>
+    int _rightCount = 0;
     float _gameTime = 0;
     bool _isGame = true;
     bool _isTimerStart = false;
@@ -30,6 +33,8 @@ public class MineSweeper : MonoBehaviour
         _gridLayoutGroup.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
         _gridLayoutGroup.constraintCount = _columns;
         _cells = new Cell[_rows, _columns];
+        _currentFlagCount = _mineCount;
+        _flagCountText.text = _currentFlagCount.ToString();
 
         //盤面を生成する
         for (var r = 0; r < _rows; r++)
@@ -64,6 +69,7 @@ public class MineSweeper : MonoBehaviour
             {
                 var cell = hit.collider.gameObject.GetComponent<Cell>();
                 cell.transform.GetChild(1).GetComponent<Image>().enabled = false;
+
                 if (_isfirst)
                 {
                     _isTimerStart = true;
@@ -91,21 +97,25 @@ public class MineSweeper : MonoBehaviour
             }
             else if (Input.GetButtonDown("Fire2") && hit && !_isfirst)  //旗を立てる
             {
-                if (!_isTimerStart) _isTimerStart = true;
                 var cell = hit.collider.gameObject.GetComponent<Cell>();
                 var Image = cell.transform.GetChild(1).GetComponent<Image>();
+
+                if (cell.IsOpen) return;    //開いていれば何もしない
 
                 if (cell.IsFlag)
                 {
                     cell.IsFlag = false;
+                    _currentFlagCount++;
                     Image.color = Color.blue;
                 }
                 else
                 {
                     cell.IsFlag = true;
+                    _currentFlagCount--;
                     Image.color = Color.red;
                 }
 
+                _flagCountText.text = _currentFlagCount.ToString();
                 GameClearCheck();
             }
 
@@ -117,7 +127,6 @@ public class MineSweeper : MonoBehaviour
         }
     }
 
-
     /// <summary>
     /// ゲームを再挑戦する
     /// 値をリセットする
@@ -125,7 +134,10 @@ public class MineSweeper : MonoBehaviour
     public void RetryGame()
     {
         _isfirst = true;
+        _isGame = true;
         _isTimerStart = false;
+        _currentFlagCount = _mineCount;
+        _flagCountText.text = _currentFlagCount.ToString();
         _gameTime = 0;
         _timeText.text = "0.00";
         _playText.text = "準備中";
@@ -145,18 +157,18 @@ public class MineSweeper : MonoBehaviour
         {
             if (cell.CellState == CellState.Mine && cell.IsFlag)
             {
-                _currentFlagCount++;
+                _rightCount++;
                 continue;
             }
 
             if (cell.IsOpen == false)
             {
-                _currentFlagCount = 0;
+                _rightCount = 0;
                 return;
             }
         }
 
-        if (_currentFlagCount == _mineCount)
+        if (_rightCount == _mineCount)
         {
             GameClear();
         }

@@ -127,6 +127,7 @@ public class Cell : MonoBehaviour
     public void ResetState()
     {
         CellState = CellState.None;
+        _cellCover.color = Color.blue;
         _mineCount = 0;
         _isOpen = false;
     }
