@@ -236,6 +236,6 @@ public class CreatePattern : MonoBehaviour
     /// <summary>ƒZƒ‹ó‘Ô‚ğ¶‘¶‚É•ÏX‚·‚é </summary>
     void ChangeCellStateLive(int row, int column)
     {
-        _gameManager.Cells[row, column].State = LifeGameCellState.Live;
+        _gameManager.Cells[row, column].State = LifeGameCellState.Alive;
     }
 }

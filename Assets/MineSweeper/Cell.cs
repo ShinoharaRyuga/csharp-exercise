@@ -9,13 +9,12 @@ public class Cell : MonoBehaviour
 {
     [SerializeField, Tooltip("地雷の数を表示するテキスト")] Text _view = null;
     [SerializeField, Tooltip("セルの状態")] CellState _cellState = CellState.None;
-    Image _cellCover => transform.GetChild(1).GetComponent<Image>();
+    Image _cellCover = default;
     /// <summary>周囲の地雷数 </summary>
     int _mineCount = 0;
     int _row = 0;
     int _column = 0;
     bool _isOpen = false;
-    bool _isMine = false;
     /// <summary>自身に旗が立っているかどうか </summary>
     bool _isFlag = false;
 
@@ -28,17 +27,18 @@ public class Cell : MonoBehaviour
             OnCellStateChanged();
         }
     }
-
     public int MineCount { get => _mineCount; set => _mineCount = value; }
     public bool IsOpen { get => _isOpen; set => _isOpen = value; }
     public bool IsFlag { get => _isFlag; set => _isFlag = value; }
     public bool IsMine => CellState == CellState.Mine;
     public int Row { get => _row; set => _row = value; }
     public int Column { get => _column; set => _column = value; }
+    public Image CellCover { get => _cellCover; set => _cellCover = value; }
 
     void Start()
     {
         OnCellStateChanged();
+         _cellCover = transform.GetChild(1).GetComponent<Image>();
     }
 
     private void OnValidate()
@@ -128,6 +128,7 @@ public class Cell : MonoBehaviour
     {
         CellState = CellState.None;
         _mineCount = 0;
+        _isOpen = false;
     }
 }
 

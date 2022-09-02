@@ -4,11 +4,11 @@ using UnityEngine.UI;
 /// <summary> ライフゲームで使用するセルを管理するクラス </summary>
 public class LifeGameCell : MonoBehaviour
 {
-    [SerializeField, Tooltip("現在の状態")] LifeGameCellState _currnetState = LifeGameCellState.Die;
+    [SerializeField, Tooltip("現在の状態")] LifeGameCellState _currnetState = LifeGameCellState.Dead;
     int _row = 0;
     int _col = 0;
     /// <summary>次世代のセル状態</summary>
-    LifeGameCellState _nextState = LifeGameCellState.Die;
+    LifeGameCellState _nextState = LifeGameCellState.Dead;
     Image _cellImage => GetComponent<Image>();
 
     public LifeGameCellState State 
@@ -22,7 +22,7 @@ public class LifeGameCell : MonoBehaviour
     }
 
     /// <summary>セルが生きている </summary>
-    public bool IsLive => State == LifeGameCellState.Live;
+    public bool IsLive => State == LifeGameCellState.Alive;
     public int Row { get => _row; set => _row = value; }
     public int Col { get => _col; set => _col = value; }
     public LifeGameCellState NextState { get => _nextState; set => _nextState = value; }
@@ -40,24 +40,24 @@ public class LifeGameCell : MonoBehaviour
         {
             if (aliveCount == 3) //誕生
             {
-                _nextState = LifeGameCellState.Live;
+                _nextState = LifeGameCellState.Alive;
             }
         }
         else
         {
             if (aliveCount == 2 || aliveCount == 3) //生存
             {
-                _nextState= LifeGameCellState.Live;
+                _nextState= LifeGameCellState.Alive;
             }
 
             if (aliveCount <= 1)   //過疎
             {
-                _nextState = LifeGameCellState.Die;
+                _nextState = LifeGameCellState.Dead;
             }
 
             if (4 <= aliveCount)   //過密
             {
-                _nextState = LifeGameCellState.Die;
+                _nextState = LifeGameCellState.Dead;
             }
         }
     }
@@ -74,10 +74,10 @@ public class LifeGameCell : MonoBehaviour
     {
         switch(_currnetState)
         {
-            case LifeGameCellState.Live:
+            case LifeGameCellState.Alive:
                 _cellImage.color = Color.green;
                 break;
-            case LifeGameCellState.Die:
+            case LifeGameCellState.Dead:
                 _cellImage.color = Color.white;
                 break;
         }
@@ -86,6 +86,6 @@ public class LifeGameCell : MonoBehaviour
 
 public enum LifeGameCellState
 {
-    Live,
-    Die
+    Alive,
+    Dead
 }

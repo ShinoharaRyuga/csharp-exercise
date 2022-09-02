@@ -74,8 +74,8 @@ public class LifeGameManager : MonoBehaviour
 
         foreach (var cell in _cells) 
         {
-            cell.State = LifeGameCellState.Die;
-            cell.NextState = LifeGameCellState.Die;
+            cell.State = LifeGameCellState.Dead;
+            cell.NextState = LifeGameCellState.Dead;
         }
     }
 
@@ -92,9 +92,9 @@ public class LifeGameManager : MonoBehaviour
             var c = Random.Range(0, _columns);
             var cell = _cells[r, c];
 
-            if (cell.State != LifeGameCellState.Live)
+            if (cell.State != LifeGameCellState.Alive)
             {
-                cell.State = LifeGameCellState.Live;
+                cell.State = LifeGameCellState.Alive;
                 i++;
             }
         }

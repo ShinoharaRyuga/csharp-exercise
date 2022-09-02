@@ -22,13 +22,13 @@ public class PlayerInput : MonoBehaviour
         {
             var cell = hit.collider.GetComponent<LifeGameCell>();
 
-            if (cell.State == LifeGameCellState.Live)
+            if (cell.State == LifeGameCellState.Alive)
             {
-                cell.State = LifeGameCellState.Die;
+                cell.State = LifeGameCellState.Dead;
             }
             else
             {
-                cell.State = LifeGameCellState.Live;
+                cell.State = LifeGameCellState.Alive;
             }
 
             Debug.Log($"r{cell.Row} c{cell.Col}");

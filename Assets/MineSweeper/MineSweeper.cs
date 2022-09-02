@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,6 +17,7 @@ public class MineSweeper : MonoBehaviour
     [SerializeField] GridLayoutGroup _gridLayoutGroup = null;
     [SerializeField, Tooltip("セルのプレハブ")] Cell _cellPrefab = null;
     [SerializeField, Tooltip("経過時間を表示するテキスト")] TMP_Text _timeText = null;
+    [SerializeField, Tooltip("ゲーム状態を標準するテキスト")] TMP_Text _playText = null;
     int _currentFlagCount = 0;
     float _gameTime = 0;
     bool _isGame = true;
@@ -66,6 +68,7 @@ public class MineSweeper : MonoBehaviour
                 {
                     _isTimerStart = true;
                     _isfirst = false;
+                    _playText.text = "プレイ中";
                     if (cell.CellState == CellState.Mine)
                     {
                         ResetMinePos();
@@ -86,7 +89,7 @@ public class MineSweeper : MonoBehaviour
 
                 GameClearCheck();
             }
-            else if (Input.GetButtonDown("Fire2") && hit)  //旗を立てる
+            else if (Input.GetButtonDown("Fire2") && hit && !_isfirst)  //旗を立てる
             {
                 if (!_isTimerStart) _isTimerStart = true;
                 var cell = hit.collider.gameObject.GetComponent<Cell>();
@@ -112,12 +115,26 @@ public class MineSweeper : MonoBehaviour
                 _timeText.text = _gameTime.ToString("F2");
             }
         }
+    }
 
 
-        if (Input.GetKeyDown(KeyCode.C))    //リトライ　デバッグ用
+    /// <summary>
+    /// ゲームを再挑戦する
+    /// 値をリセットする
+    /// </summary>
+    public void RetryGame()
+    {
+        _isfirst = true;
+        _isTimerStart = false;
+        _gameTime = 0;
+        _timeText.text = "0.00";
+        _playText.text = "準備中";
+        ResetMinePos();
+        SetMine();
+
+        foreach (var cell in _cells)
         {
-            ResetMinePos();
-            SetMine();
+            cell.CellCover.enabled = true;
         }
     }
 
@@ -150,6 +167,7 @@ public class MineSweeper : MonoBehaviour
     {
         _isTimerStart = false;
         _isGame = false;
+        _playText.text = "クリア!";
         Debug.Log("クリア");
     }
 
@@ -160,6 +178,7 @@ public class MineSweeper : MonoBehaviour
         if (gameover)
         {
             Debug.Log("失敗");
+            _playText.text = "失敗...";
             _isGame = false;
         }
     }
