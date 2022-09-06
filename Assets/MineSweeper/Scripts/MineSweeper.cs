@@ -15,7 +15,7 @@ public class MineSweeper : MonoBehaviour
     [SerializeField] int[] _nomalData = new int[3];
     [LevelDataArray(new string[] { "横の長さ", "縦の長さ", "地雷数" })]
     [SerializeField] int[] _hardData = new int[3];
-    [SerializeField, Tooltip("難易度")] Level _currentLevel = Level.Normal;
+    [SerializeField, Header("難易度")] Level _currentLevel = Level.Normal;
     [SerializeField] GridLayoutGroup _gridLayoutGroup = null;
     [SerializeField, Tooltip("セルのプレハブ")] Cell _cellPrefab = null;
     [SerializeField, Tooltip("経過時間を表示するテキスト")] TMP_Text _timeText = null;
@@ -36,6 +36,22 @@ public class MineSweeper : MonoBehaviour
     /// <summary>初めて遊ぶかどうか </summary>
     bool _isFirstGame = true;
     Cell[,] _cells;
+
+    private void OnValidate()
+    {
+        switch (_currentLevel)
+        {
+            case Level.Easy:
+                _levelDropdown.value = 0;
+                break;
+            case Level.Normal:
+                _levelDropdown.value = 1;
+                break;
+            case Level.Hard:
+                _levelDropdown.value = 2;
+                break;
+        }
+    }
 
     private void Start()
     {
@@ -225,7 +241,6 @@ public class MineSweeper : MonoBehaviour
         _isTimerStart = false;
         _isGame = false;
         _playText.text = "クリア!";
-        Debug.Log("クリア");
     }
 
     /// <summary>地雷の引いたらゲームを終了させる </summary>
@@ -234,7 +249,6 @@ public class MineSweeper : MonoBehaviour
     {
         if (gameover)
         {
-            Debug.Log("失敗");
             _playText.text = "失敗...";
             _isGame = false;
         }
@@ -289,8 +303,6 @@ public class MineSweeper : MonoBehaviour
     }
 
     /// <summary>地雷の数を数える </summary>
-    /// <param name="r"></param>
-    /// <param name="c"></param>
     private void SetMineCount(Cell target)
     {
         int r = target.Row;
@@ -339,8 +351,6 @@ public class MineSweeper : MonoBehaviour
     }
 
     /// <summary>引数を使いセルを取得しのそのセル状態が地雷ではなければ周囲の地雷の数を表示するにする</summary>
-    /// <param name="r"></param>
-    /// <param name="c"></param>
     private void CheckMine(int r, int c)
     {
         var cell = _cells[r, c];
@@ -354,9 +364,7 @@ public class MineSweeper : MonoBehaviour
     /// <summary>
     /// 開いたセルの周囲八マスを開ける 
     /// 更に開いたセルが空だったら周囲八マスのセルを開ける
-    /// 再起呼びたし
     /// </summary>
-    /// <param name="target"></param>
     private void AroundCellOpen(Cell target)
     {
         if (target.CellState == CellState.Count) return;

@@ -1258,7 +1258,6 @@ MonoBehaviour:
   _easyData: 070000000700000005000000
   _nomalData: 0b0000000b0000000a000000
   _hardData: 0f0000000f0000000f000000
-  _viewMode: 2
   _currentLevel: 1
   _gridLayoutGroup: {fileID: 982833026}
   _cellPrefab: {fileID: 1429797709469563331, guid: 8020ab1f9fe39c5418a7c93a95006862, type: 3}
