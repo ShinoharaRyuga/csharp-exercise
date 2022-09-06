@@ -509,7 +509,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Option A
+  m_text: Text
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 97d28bc8750f6ce439eaf5ba704c9cd8, type: 2}
   m_sharedMaterial: {fileID: 9142180944433247935, guid: 97d28bc8750f6ce439eaf5ba704c9cd8, type: 2}
@@ -575,7 +575,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &499123326
@@ -1061,7 +1061,6 @@ GameObject:
   - component: {fileID: 982833028}
   - component: {fileID: 982833027}
   - component: {fileID: 982833026}
-  - component: {fileID: 982833029}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -1151,27 +1150,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 982833024}
   m_CullTransparentMesh: 1
---- !u!114 &982833029
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 982833024}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2b8a2d4cd54d10440978ec50c9aec756, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _rows: 15
-  _columns: 15
-  _mineCount: 5
-  _viewMode: 2
-  _gridLayoutGroup: {fileID: 982833026}
-  _cellPrefab: {fileID: 1429797709469563331, guid: 8020ab1f9fe39c5418a7c93a95006862, type: 3}
-  _timeText: {fileID: 1269613839}
-  _playText: {fileID: 708021958}
-  _flagCountText: {fileID: 1130919019}
 --- !u!1 &990447879
 GameObject:
   m_ObjectHideFlags: 0
@@ -1248,6 +1226,61 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 990447879}
   m_CullTransparentMesh: 1
+--- !u!1 &1000649849
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1000649851}
+  - component: {fileID: 1000649850}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1000649850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000649849}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b8a2d4cd54d10440978ec50c9aec756, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _easyData: 070000000700000001000000
+  _nomalData: 0b0000000b0000000a000000
+  _hardData: 0f0000000f0000000f000000
+  _viewMode: 2
+  _currentLevel: 1
+  _gridLayoutGroup: {fileID: 982833026}
+  _cellPrefab: {fileID: 1429797709469563331, guid: 8020ab1f9fe39c5418a7c93a95006862, type: 3}
+  _timeText: {fileID: 1269613839}
+  _playText: {fileID: 708021958}
+  _flagCountText: {fileID: 1130919019}
+  _levelDropdown: {fileID: 1514125565}
+--- !u!4 &1000649851
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000649849}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1043467452
 GameObject:
   m_ObjectHideFlags: 0
@@ -1472,7 +1505,7 @@ GameObject:
   - component: {fileID: 1182707061}
   - component: {fileID: 1182707060}
   m_Layer: 5
-  m_Name: ResetButton
+  m_Name: RetryButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1543,7 +1576,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 982833029}
+      - m_Target: {fileID: 1000649850}
         m_TargetAssemblyTypeName: MineSweeper, Assembly-CSharp
         m_MethodName: RetryGame
         m_Mode: 1
@@ -2053,7 +2086,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u30EA\u30BB\u30C3\u30C8"
+  m_text: "\u30EA\u30C8\u30E9\u30A4"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 97d28bc8750f6ce439eaf5ba704c9cd8, type: 2}
   m_sharedMaterial: {fileID: 9142180944433247935, guid: 97d28bc8750f6ce439eaf5ba704c9cd8, type: 2}
@@ -2180,7 +2213,7 @@ GameObject:
   - component: {fileID: 1514125566}
   - component: {fileID: 1514125565}
   m_Layer: 5
-  m_Name: Dropdown
+  m_Name: LevelDropdown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2254,9 +2287,9 @@ MonoBehaviour:
   m_CaptionText: {fileID: 2132419731}
   m_CaptionImage: {fileID: 0}
   m_Placeholder: {fileID: 0}
-  m_ItemText: {fileID: 0}
+  m_ItemText: {fileID: 499123325}
   m_ItemImage: {fileID: 0}
-  m_Value: 1
+  m_Value: 0
   m_Options:
     m_Options:
     - m_Text: "\u512A\u3057\u3044"
@@ -2267,7 +2300,19 @@ MonoBehaviour:
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1000649850}
+        m_TargetAssemblyTypeName: MineSweeper, Assembly-CSharp
+        m_MethodName: ChangeLevel
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_AlphaFadeSpeed: 0.15
 --- !u!114 &1514125566
 MonoBehaviour:
@@ -2652,7 +2697,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u666E\u901A"
+  m_text: "\u512A\u3057\u3044"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 97d28bc8750f6ce439eaf5ba704c9cd8, type: 2}
   m_sharedMaterial: {fileID: 9142180944433247935, guid: 97d28bc8750f6ce439eaf5ba704c9cd8, type: 2}

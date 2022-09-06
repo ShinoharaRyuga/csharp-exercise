@@ -9,15 +9,24 @@ using UnityEngine.UI;
 /// </summary>
 public class MineSweeper : MonoBehaviour
 {
-    [SerializeField, Tooltip("縦の長さ"), Range(2, 15)] int _rows = 10;
-    [SerializeField, Tooltip("横の長さ"), Range(2, 15)] int _columns = 10;
-    [SerializeField, Tooltip("地雷の数")] int _mineCount = 10;
+    [LevelDataArray(new string[] { "横の長さ", "縦の長さ", "地雷数" })]
+    [SerializeField] int[] _easyData = new int[3];
+    [LevelDataArray(new string[] { "横の長さ", "縦の長さ", "地雷数" })]
+    [SerializeField] int[] _nomalData = new int[3];
+    [LevelDataArray(new string[] { "横の長さ", "縦の長さ", "地雷数" })]
+    [SerializeField] int[] _hardData = new int[3];
+
     [SerializeField, Tooltip("セルの状態を見ることが出来る")] ViewMode _viewMode = ViewMode.Game;
+    [SerializeField, Tooltip("難易度")] Level _currentLevel = Level.Normal;
     [SerializeField] GridLayoutGroup _gridLayoutGroup = null;
     [SerializeField, Tooltip("セルのプレハブ")] Cell _cellPrefab = null;
     [SerializeField, Tooltip("経過時間を表示するテキスト")] TMP_Text _timeText = null;
     [SerializeField, Tooltip("ゲーム状態を標準するテキスト")] TMP_Text _playText = null;
     [SerializeField, Tooltip("旗数を表示するテキスト")] TMP_Text _flagCountText = null;
+    [SerializeField, Tooltip("難易度を変更するドロップダウン")] TMP_Dropdown _levelDropdown = null;
+    int _rows = 10;
+    int _columns = 10;
+    int _mineCount = 10;
     /// <summary>盤面に置かれている旗数 </summary>
     int _currentFlagCount = 0;
     /// <summary>旗の位置が合っている数 </summary>
@@ -31,11 +40,12 @@ public class MineSweeper : MonoBehaviour
     private void Start()
     {
         _gridLayoutGroup.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+        ChangeLevel();
         _gridLayoutGroup.constraintCount = _columns;
-        _cells = new Cell[_rows, _columns];
         _currentFlagCount = _mineCount;
         _flagCountText.text = _currentFlagCount.ToString();
 
+      
         //盤面を生成する
         for (var r = 0; r < _rows; r++)
         {
@@ -50,15 +60,11 @@ public class MineSweeper : MonoBehaviour
         }
 
         SetMine();
+        
     }
 
     private void Update()
     {
-        foreach (var cell in _cells)    //地雷の位置を見えるようにする　デバッグ用
-        {
-            cell.SetView(_viewMode);
-        }
-
         var screenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, Input.mousePosition);
         Ray ray = Camera.main.ScreenPointToRay(screenPos);
         RaycastHit2D hit = Physics2D.Raycast((Vector2)ray.origin, (Vector2)ray.direction);
@@ -144,9 +150,43 @@ public class MineSweeper : MonoBehaviour
         ResetMinePos();
         SetMine();
 
+        //セルにカバーを掛ける
         foreach (var cell in _cells)
         {
             cell.CellCover.enabled = true;
+        }
+    }
+
+
+
+    /// <summary>難易度を変更する </summary>
+    public void ChangeLevel()
+    {
+        _currentLevel = (Level)_levelDropdown.value;
+
+        switch (_currentLevel)
+        {
+            case Level.Easy:
+                _rows = _easyData[0];
+                _columns = _easyData[1];
+                _mineCount = _easyData[2];
+                _cells = new Cell[_rows, _columns];
+                Debug.Log("優しい");
+                break;
+            case Level.Normal:
+                _rows = _nomalData[0];
+                _columns = _nomalData[1];
+                _mineCount = _nomalData[2];
+                _cells = new Cell[_rows, _columns];
+                Debug.Log("普通");
+                break;
+            case Level.Hard:
+                _rows = _hardData[0];
+                _columns = _hardData[1];
+                _mineCount = _hardData[2];
+                _cells = new Cell[_rows, _columns];
+                Debug.Log("難しい");
+                break;
         }
     }
 
@@ -222,8 +262,8 @@ public class MineSweeper : MonoBehaviour
 
         for (var i = 0; i < count; i++)
         {
-            var r = UnityEngine.Random.Range(0, _rows);
-            var c = UnityEngine.Random.Range(0, _columns);
+            var r = Random.Range(0, _rows);
+            var c = Random.Range(0, _columns);
             var cell = _cells[r, c];
 
             if (cell.CellState == CellState.None && firstCell != cell)
@@ -396,8 +436,6 @@ public class MineSweeper : MonoBehaviour
             }
         }
     }
-
-
 }
 
 public enum ViewMode
@@ -405,4 +443,11 @@ public enum ViewMode
     All = 0,
     MineOnly = 1,
     Game = 2,
+}
+
+public enum Level
+{
+    Easy = 0,
+    Normal = 1,
+    Hard = 2,
 }
