@@ -97,32 +97,6 @@ public class Cell : MonoBehaviour
         return this;
     }
 
-    /// <summary>地雷が見えるようにする </summary>
-    /// <param name="isView"></param>
-    public void SetView(ViewMode mode)
-    {
-        _view.enabled = false;
-
-        switch (mode)
-        {
-            case ViewMode.All:
-                _view.enabled = true;
-                break;
-            case ViewMode.MineOnly:
-                if (_cellState == CellState.Mine)
-                {
-                    _view.enabled = true;
-                }
-                break;
-            case ViewMode.Game:
-                if (_isOpen)
-                {
-                    _view.enabled = true;
-                }
-                break;
-        }
-    }
-
     /// <summary>状態をリセットする </summary>
     public void ResetState()
     {

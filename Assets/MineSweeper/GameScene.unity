@@ -1255,7 +1255,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b8a2d4cd54d10440978ec50c9aec756, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _easyData: 070000000700000001000000
+  _easyData: 070000000700000005000000
   _nomalData: 0b0000000b0000000a000000
   _hardData: 0f0000000f0000000f000000
   _viewMode: 2
@@ -2289,7 +2289,7 @@ MonoBehaviour:
   m_Placeholder: {fileID: 0}
   m_ItemText: {fileID: 499123325}
   m_ItemImage: {fileID: 0}
-  m_Value: 0
+  m_Value: 1
   m_Options:
     m_Options:
     - m_Text: "\u512A\u3057\u3044"
@@ -2304,7 +2304,7 @@ MonoBehaviour:
       - m_Target: {fileID: 1000649850}
         m_TargetAssemblyTypeName: MineSweeper, Assembly-CSharp
         m_MethodName: ChangeLevel
-        m_Mode: 1
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -2697,7 +2697,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u512A\u3057\u3044"
+  m_text: "\u666E\u901A"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 97d28bc8750f6ce439eaf5ba704c9cd8, type: 2}
   m_sharedMaterial: {fileID: 9142180944433247935, guid: 97d28bc8750f6ce439eaf5ba704c9cd8, type: 2}

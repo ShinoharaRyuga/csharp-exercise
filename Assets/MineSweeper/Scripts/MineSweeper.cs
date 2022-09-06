@@ -15,8 +15,6 @@ public class MineSweeper : MonoBehaviour
     [SerializeField] int[] _nomalData = new int[3];
     [LevelDataArray(new string[] { "横の長さ", "縦の長さ", "地雷数" })]
     [SerializeField] int[] _hardData = new int[3];
-
-    [SerializeField, Tooltip("セルの状態を見ることが出来る")] ViewMode _viewMode = ViewMode.Game;
     [SerializeField, Tooltip("難易度")] Level _currentLevel = Level.Normal;
     [SerializeField] GridLayoutGroup _gridLayoutGroup = null;
     [SerializeField, Tooltip("セルのプレハブ")] Cell _cellPrefab = null;
@@ -35,32 +33,18 @@ public class MineSweeper : MonoBehaviour
     bool _isGame = true;
     bool _isTimerStart = false;
     bool _isfirst = true;
+    /// <summary>初めて遊ぶかどうか </summary>
+    bool _isFirstGame = true;
     Cell[,] _cells;
 
     private void Start()
     {
+        ChangeLevel(true);
+        CreateBoard();
+        SetMine();
         _gridLayoutGroup.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-        ChangeLevel();
-        _gridLayoutGroup.constraintCount = _columns;
         _currentFlagCount = _mineCount;
         _flagCountText.text = _currentFlagCount.ToString();
-
-      
-        //盤面を生成する
-        for (var r = 0; r < _rows; r++)
-        {
-            for (var c = 0; c < _columns; c++)
-            {
-                var cell = Instantiate(_cellPrefab, _gridLayoutGroup.transform);
-                cell.SetView(_viewMode);
-                cell.Row = r;
-                cell.Column = c;
-                _cells[r, c] = cell;
-            }
-        }
-
-        SetMine();
-        
     }
 
     private void Update()
@@ -74,6 +58,8 @@ public class MineSweeper : MonoBehaviour
             if (Input.GetButtonDown("Fire1") && hit)   //セルを開ける
             {
                 var cell = hit.collider.gameObject.GetComponent<Cell>();
+                if (cell.IsFlag) return;
+
                 cell.transform.GetChild(1).GetComponent<Image>().enabled = false;
 
                 if (_isfirst)
@@ -142,25 +128,18 @@ public class MineSweeper : MonoBehaviour
         _isfirst = true;
         _isGame = true;
         _isTimerStart = false;
+        _isFirstGame = false;
         _currentFlagCount = _mineCount;
         _flagCountText.text = _currentFlagCount.ToString();
         _gameTime = 0;
         _timeText.text = "0.00";
         _playText.text = "準備中";
-        ResetMinePos();
+        CreateBoard();
         SetMine();
-
-        //セルにカバーを掛ける
-        foreach (var cell in _cells)
-        {
-            cell.CellCover.enabled = true;
-        }
     }
 
-
-
     /// <summary>難易度を変更する </summary>
-    public void ChangeLevel()
+    public void ChangeLevel(bool isFirstGame)
     {
         _currentLevel = (Level)_levelDropdown.value;
 
@@ -170,24 +149,50 @@ public class MineSweeper : MonoBehaviour
                 _rows = _easyData[0];
                 _columns = _easyData[1];
                 _mineCount = _easyData[2];
-                _cells = new Cell[_rows, _columns];
-                Debug.Log("優しい");
                 break;
             case Level.Normal:
                 _rows = _nomalData[0];
                 _columns = _nomalData[1];
                 _mineCount = _nomalData[2];
-                _cells = new Cell[_rows, _columns];
-                Debug.Log("普通");
                 break;
             case Level.Hard:
                 _rows = _hardData[0];
                 _columns = _hardData[1];
                 _mineCount = _hardData[2];
-                _cells = new Cell[_rows, _columns];
-                Debug.Log("難しい");
                 break;
         }
+
+        if (!isFirstGame)
+        {
+            RetryGame();
+        }
+    }
+
+    /// <summary>盤面を生成する</summary>
+    private void CreateBoard()
+    {
+        if (!_isFirstGame)
+        {
+            foreach (var cell in _cells)
+            {
+                Destroy(cell.gameObject);
+            }
+        }
+
+        _cells = new Cell[_rows, _columns];
+
+        for (var r = 0; r < _rows; r++)
+        {
+            for (var c = 0; c < _columns; c++)
+            {
+                var cell = Instantiate(_cellPrefab, _gridLayoutGroup.transform);
+                cell.Row = r;
+                cell.Column = c;
+                _cells[r, c] = cell;
+            }
+        }
+
+        _gridLayoutGroup.constraintCount = _columns;
     }
 
     /// <summary>ゲームクリアしているから調べる </summary>
@@ -242,8 +247,8 @@ public class MineSweeper : MonoBehaviour
 
         for (var i = 0; i < count;)
         {
-            var r = UnityEngine.Random.Range(0, _rows);
-            var c = UnityEngine.Random.Range(0, _columns);
+            var r = Random.Range(0, _rows);
+            var c = Random.Range(0, _columns);
             var cell = _cells[r, c];
 
             if (cell.CellState != CellState.Mine)　//選択されたセルの状態が空であれば地雷にする
@@ -436,13 +441,6 @@ public class MineSweeper : MonoBehaviour
             }
         }
     }
-}
-
-public enum ViewMode
-{
-    All = 0,
-    MineOnly = 1,
-    Game = 2,
 }
 
 public enum Level
