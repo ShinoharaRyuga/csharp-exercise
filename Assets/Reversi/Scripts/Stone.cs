@@ -3,6 +3,11 @@ using UnityEngine;
 public class Stone : MonoBehaviour
 {
     [SerializeField] StoneColor _currentState = StoneColor.Black;
+    /// <summary>自身が置かれたマス目 </summary>
+    Board _putBoard = null;
+
+    public StoneColor CurrentState { get => _currentState; set => _currentState = value; }
+    public Board PutBoard { get => _putBoard; set => _putBoard = value; }
 
     void ChangeStoneState()
     {
