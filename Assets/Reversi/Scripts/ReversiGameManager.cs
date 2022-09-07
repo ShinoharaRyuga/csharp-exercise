@@ -208,6 +208,9 @@ public class ReversiGameManager : MonoBehaviour
     /// <summary>盤面生成や石の初期位置を設定 </summary>
     void Setup()
     {
+        //各マスの名前
+        var names = new string[] { "a", "b", "c", "d", "e", "f", "g", "h" };
+
         //盤面を生成
         for (var x = 0; x < BOARD_SIZE_X; x++)
         {
@@ -215,6 +218,7 @@ public class ReversiGameManager : MonoBehaviour
             {
                 var generatePos = new Vector3(x, 0, z);
                 var board = Instantiate(boardPrefab, generatePos, Quaternion.identity);
+                board.gameObject.name = $"{names[x]}{z + 1}";
                 _board[x, z] = board;
                 board.transform.parent = _boardParent;
                 board.BoardPosX = x;
