@@ -15,12 +15,11 @@ public class ReversiPlayerInput : MonoBehaviour
             if (hit.collider.gameObject.TryGetComponent(out Board board))
             {
                 if (!board.OnStone && board.IsPut)
-                { 
+                {
                     var generatePos = new Vector3(board.transform.position.x, GENERATE_POS_Y, board.transform.position.z);
                     _gameManager.StoneGenerator(generatePos, board);
+                    board.OnStone = true;
                 }
-
-                board.OnStone = true;
             }
         }
 

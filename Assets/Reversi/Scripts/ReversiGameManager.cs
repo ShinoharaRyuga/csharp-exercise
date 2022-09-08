@@ -11,35 +11,21 @@ public class ReversiGameManager : MonoBehaviour
     [SerializeField] Stone _stonePrefab = default;
     [SerializeField] Board boardPrefab = default;
     [SerializeField] Transform _boardParent = default;
-    [SerializeField] StoneColor _turn = StoneColor.Black;
+    [SerializeField] BoardState _turn = BoardState.Black;
+    [SerializeField] Material _lightGreen = default;
     List<Stone> _whiteStones = new List<Stone>();
     List<Stone> _blackStones = new List<Stone>();
     List<Board> _putPoints = new List<Board>();
     /// <summary>0=なし 1=黒 2=白 </summary>
-    int[,] _stonePosArray = new int[BOARD_SIZE_X, BOARD_SIZE_Z];
     Board[,] _board = new Board[BOARD_SIZE_X, BOARD_SIZE_Z];
 
-    public StoneColor Turn { get => _turn; }
+    int count = 0;
+
+    public BoardState Turn { get => _turn; }
 
     private void Start()
     {
         Setup();
-
-        //debug
-        //for (var i = 0; i < 8; i++)
-        //{
-        //    var str = "";
-        //    for (var k = 0; k < 8; k++)
-        //    {
-
-        //        str += " " + _board[i, k].ToString();
-
-        //        if (k == 7)
-        //        {
-        //            Debug.Log(str);
-        //        }
-        //    }
-        //}
 
         //初期石を取得しリストに追加する
         var stones = GameObject.FindGameObjectsWithTag("Stone");
@@ -48,69 +34,84 @@ public class ReversiGameManager : MonoBehaviour
         {
             var playerStone = stone.GetComponent<Stone>();
 
-            if (playerStone.CurrentState == StoneColor.White)
+            if (playerStone.CurrentState == BoardState.White)
             {
                 _whiteStones.Add(playerStone);
             }
-            else if (playerStone.CurrentState == StoneColor.Black)
+            else if (playerStone.CurrentState == BoardState.Black)
             {
                 _blackStones.Add(playerStone);
             }
         }
+
+        CheckPutStone();
     }
 
     private void Update()
     {
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetKeyDown(KeyCode.B))
         {
-            CheckPutStone();
+            for (var i = 0; i < 8; i++)
+            {
+                var str = "";
+                for (var k = 0; k < 8; k++)
+                {
+                    var state = _board[i, k].CurrentState;
+                    str += " " + (int)state;
+
+                    if (k == 7)
+                    {
+                        Debug.Log(str);
+                    }
+                }
+            }
         }
     }
 
     public void CheckPutStone()
     {
-        if (_turn == StoneColor.White)
+        if (_turn == BoardState.White)
         {
+            Debug.Log("white");
             foreach (var whiteStone in _whiteStones)
             {
                 if (whiteStone.PutBoard.BoardPosZ + 1 < BOARD_SIZE_Z)   //上
                 {
-                    if (_stonePosArray[whiteStone.PutBoard.BoardPosX, whiteStone.PutBoard.BoardPosZ + 1] == 1)
+                    if ((int)_board[whiteStone.PutBoard.BoardPosX, whiteStone.PutBoard.BoardPosZ + 1].CurrentState == 1)
                     {
                         var up = _board[whiteStone.PutBoard.BoardPosX, whiteStone.PutBoard.BoardPosZ + 1];
                         TryPutUpLine(up);
-                        Debug.Log("発射");
                     }
                 }
             }
         }
-        else if (_turn == StoneColor.Black)
+        else if (_turn == BoardState.Black)
         {
+            Debug.Log("black");
             foreach (var blackStone in _blackStones)
             {
-                Debug.Log(blackStone);
-
                 if (blackStone.PutBoard.BoardPosZ + 1 < BOARD_SIZE_Z)   //上
                 {
-                    if (_stonePosArray[blackStone.PutBoard.BoardPosX, blackStone.PutBoard.BoardPosZ + 1] == 2)
+                    if ((int)_board[blackStone.PutBoard.BoardPosX, blackStone.PutBoard.BoardPosZ + 1].CurrentState == 2)
                     {
                         var up = _board[blackStone.PutBoard.BoardPosX, blackStone.PutBoard.BoardPosZ + 1];
                         TryPutUpLine(up);
-                        Debug.Log("発射");
                     }
                 }
             }
         }
 
         _putPoints.ForEach(b => b.IsPut = true);
+        _putPoints.ForEach(b => Debug.Log(b.gameObject.name));
     }
 
     void TryPutUpLine(Board target)
     {
-        var tryPutPos = _stonePosArray[target.BoardPosX, target.BoardPosZ + 1];
+        if (BOARD_SIZE_Z <= target.BoardPosZ + 1) { return; }
+        var tryPutPos = (int)_board[target.BoardPosX, target.BoardPosZ + 1].CurrentState;
         var nextBoard = _board[target.BoardPosX, target.BoardPosZ + 1];
 
-        if (_turn == StoneColor.White)
+        if (_turn == BoardState.White)
         {
             switch (tryPutPos)
             {
@@ -122,7 +123,7 @@ public class ReversiGameManager : MonoBehaviour
                     break;
             }
         }
-        else if (_turn == StoneColor.Black)
+        else if (_turn == BoardState.Black)
         {
             switch (tryPutPos)
             {
@@ -136,76 +137,87 @@ public class ReversiGameManager : MonoBehaviour
         }
     }
 
-    void CheckBoard()
+    void TryPutDownLine(Board target)
     {
-        //if (0 <= r - 1) //上
-        //{
+        if (target.BoardPosZ - 1 <= 0) { return; }
 
-        //}
+        var tryPutPos = (int)_board[target.BoardPosX, target.BoardPosZ - 1].CurrentState;
+        var nextBoard = _board[target.BoardPosX, target.BoardPosZ - 1];
 
-        //if (0 <= r - 1 && c + 1 < BOARD_SIZE_Z) //右上
-        //{
-
-        //}
-
-        //if (0 <= c - 1) //左
-        //{
-
-        //}
-
-        //if (c + 1 < BOARD_SIZE_Z)   //右
-        //{
-
-        //}
-
-        //if (r + 1 < BOARD_SIZE_X && 0 <= c - 1) //左下
-        //{
-
-        //}
-
-        //if (r + 1 < BOARD_SIZE_X) //下
-        //{
-
-        //}
-
-        //if (r + 1 < BOARD_SIZE_X && c + 1 < BOARD_SIZE_Z) //右下
-        //{
-
-        //}
+        if (_turn == BoardState.White)
+        {
+            switch (tryPutPos)
+            {
+                case 0:     //石が置かれていない
+                    _putPoints.Add(nextBoard);
+                    break;
+                case 1:     //黒石が置かれている
+                    TryPutDownLine(nextBoard);
+                    break;
+            }
+        }
+        else if (_turn == BoardState.Black)
+        {
+            // Debug.Log(tryPutPos);
+            switch (tryPutPos)
+            {
+                case 0:     //石が置かれていない
+                    _putPoints.Add(nextBoard);
+                    Debug.Log("0");
+                    break;
+                case 2:     //白石が置かれている
+                    TryPutDownLine(nextBoard);
+                    Debug.Log("1");
+                    break;
+            }
+        }
     }
 
     /// <summary>指定した位置に石を生成する </summary>
     /// <param name="pos">生成位置</param>
     /// <param name="putBoard">置かれるマス目</param>
-    public void StoneGenerator(Vector3 pos, Board putBoard)
+    public Stone StoneGenerator(Vector3 pos, Board putBoard)
     {
+        count++;
         var stone = Instantiate(_stonePrefab, pos, Quaternion.identity);
         stone.PutBoard = putBoard;
-        _stonePosArray[putBoard.BoardPosX, putBoard.BoardPosZ] = 1;
-        if (_turn == StoneColor.White)
+        stone.gameObject.name = count.ToString();
+
+        if (_turn == BoardState.White)
         {
             stone.transform.Rotate(180, 0, 0);
-            _stonePosArray[putBoard.BoardPosX, putBoard.BoardPosZ] = 2;
+            _board[putBoard.BoardPosX, putBoard.BoardPosZ].CurrentState = BoardState.White; 
+            stone.CurrentState = BoardState.White;
+            _whiteStones.Add(stone);
+        }
+        else if (_turn == BoardState.Black)
+        {
+            _board[putBoard.BoardPosX, putBoard.BoardPosZ].CurrentState = BoardState.Black;
+            _blackStones.Add(stone);
         }
 
         ChangeTurn();
+        _putPoints.ForEach(b => b.IsPut = false);
         _putPoints.Clear();
+
+        CheckPutStone();
+        return stone;
     }
 
     /// <summary>手番を切り替える </summary>
     public void ChangeTurn()
     {
-        if (_turn == StoneColor.White)
+        if (_turn == BoardState.White)
         {
-            _turn = StoneColor.Black;
+            _turn = BoardState.Black;
         }
-        else if (_turn == StoneColor.Black)
+        else if (_turn == BoardState.Black)
         {
-            _turn = StoneColor.White;
+            _turn = BoardState.White;
         }
     }
 
-    /// <summary>盤面生成や石の初期位置を設定 </summary>
+    /// <summary>盤面生成や石の初期位置を設定を行う </summary>
     void Setup()
     {
         //各マスの名前
@@ -224,55 +236,51 @@ public class ReversiGameManager : MonoBehaviour
                 board.BoardPosX = x;
                 board.BoardPosZ = z;
 
+                //マス目の色を変更する
+                if (z % 2 == 0 && x % 2 == 0 || z % 2 == 1 && x % 2 == 1)
+                {
+                    board.gameObject.GetComponent<MeshRenderer>().material = _lightGreen;
+                }
+               
                 //下記処理で初期位置に各石を生成
-                if (x == 3 && z == 3)
+                if (x == 3 && z == 3 || x == 4 && z == 4)   //白
                 {
                     board.OnStone = true;
                     var pos = new Vector3(x, STONE_GENERATE_POS_Y, z);
-                    FirstStoneGenerator(StoneColor.White, board, pos);
+                    count++;
+                    FirstStoneGenerator(BoardState.White, board, pos);
+                    
                 }
 
-                if (x == 4 && z == 4)
+                if (x == 3 && z == 4 || x == 4 && z == 3)   //黒
                 {
                     board.OnStone = true;
                     var pos = new Vector3(x, STONE_GENERATE_POS_Y, z);
-                    FirstStoneGenerator(StoneColor.White, board, pos);
-                }
-
-                if (x == 3 && z == 4)
-                {
-                    board.OnStone = true;
-                    var pos = new Vector3(x, STONE_GENERATE_POS_Y, z);
-                    FirstStoneGenerator(StoneColor.Black, board, pos);
-                }
-
-                if (x == 4 && z == 3)
-                {
-                    board.OnStone = true;
-                    var pos = new Vector3(x, STONE_GENERATE_POS_Y, z);
-                    FirstStoneGenerator(StoneColor.Black, board, pos);
+                    count++;
+                    FirstStoneGenerator(BoardState.Black, board, pos);
                 }
             }
         }
 
         //白の初期位置を設定
-        _stonePosArray[4, 4] = 2;
-        _stonePosArray[3, 3] = 2;
+        _board[4, 4].CurrentState = BoardState.White;
+        _board[3, 3].CurrentState = BoardState.White;
         //黒の初期位置を設定
-        _stonePosArray[3, 4] = 1;
-        _stonePosArray[4, 3] = 1;
+        _board[3, 4].CurrentState = BoardState.Black;
+        _board[4, 3].CurrentState = BoardState.Black;
     }
 
     /// <summary>初期石を生成する</summary>
-    void FirstStoneGenerator(StoneColor color, Board putBorad, Vector3 generatorPos)
+    void FirstStoneGenerator(BoardState color, Board putBorad, Vector3 generatorPos)
     {
         var stone = Instantiate(_stonePrefab, generatorPos, Quaternion.identity);
         stone.PutBoard = putBorad;
+        stone.gameObject.name = count.ToString();
 
-        if (color == StoneColor.White)
+        if (color == BoardState.White)
         {
             stone.transform.Rotate(180, 0, 0);
-            stone.CurrentState = StoneColor.White;
+            stone.CurrentState = BoardState.White;
         }
     }
 }
