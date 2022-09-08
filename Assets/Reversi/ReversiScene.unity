@@ -183,7 +183,7 @@ MonoBehaviour:
   _stonePrefab: {fileID: 5592827599341655331, guid: fef7823fa4202744884ad7b2dd63c7ec, type: 3}
   boardPrefab: {fileID: 3364439891449618414, guid: 890d2d82987309443ac3407521344b61, type: 3}
   _boardParent: {fileID: 1483798241}
-  _turn: 0
+  _turn: 1
   _lightGreen: {fileID: 2100000, guid: 210dca1217c961342b18d0d1509e1da7, type: 2}
 --- !u!1 &1483798240
 GameObject:
