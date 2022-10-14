@@ -479,7 +479,7 @@ MonoBehaviour:
   _rows: 15
   _columns: 32
   _minCellCount: 1
-  _maxCellCount: 314
+  _maxCellCount: 205
   _stepTime: 0.1
   _cellPrefab: {fileID: 7980271685253851619, guid: 5ad586182bccf064ca902e0b715ed096, type: 3}
   _playText: {fileID: 349809127}

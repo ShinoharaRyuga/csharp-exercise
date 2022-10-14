@@ -9,6 +9,8 @@ public class CreatePattern : MonoBehaviour
 
     public void Pulsar()
     {
+        if(_gameManager.Rows != 15 && _gameManager.Columns != 32) { return; }
+
         _gameManager.ResetCellState();
         _playText.text = "パルサー";
 
@@ -71,6 +73,8 @@ public class CreatePattern : MonoBehaviour
 
     public void Octagon()
     {
+        if (_gameManager.Rows != 15 && _gameManager.Columns != 32) { return; }
+
         _gameManager.ResetCellState();
         _playText.text = "八角形";
 
@@ -101,6 +105,8 @@ public class CreatePattern : MonoBehaviour
 
     public void Galaxy()
     {
+        if (_gameManager.Rows != 15 && _gameManager.Columns != 32) { return; }
+
         _gameManager.ResetCellState();
         _playText.text = "銀河";
 
@@ -143,6 +149,8 @@ public class CreatePattern : MonoBehaviour
 
     public void Pentadecathlon()
     {
+        if (_gameManager.Rows != 15 && _gameManager.Columns != 32) { return; }
+
         _gameManager.ResetCellState();
         _playText.text = "ペンタデカスロン";
 
@@ -161,6 +169,8 @@ public class CreatePattern : MonoBehaviour
 
     public void DieHard()
     {
+        if (_gameManager.Rows != 15 && _gameManager.Columns != 32) { return; }
+
         _gameManager.ResetCellState();
         _playText.text = "ダイハード";
 
@@ -178,6 +188,8 @@ public class CreatePattern : MonoBehaviour
 
     public void Acorn()
     {
+        if (_gameManager.Rows != 15 && _gameManager.Columns != 32) { return; }
+
         _gameManager.ResetCellState();
         _playText.text = "どんぐり";
 
@@ -195,6 +207,8 @@ public class CreatePattern : MonoBehaviour
 
     public void Glider()
     {
+        if (_gameManager.Rows != 15 && _gameManager.Columns != 32) { return; }
+
         _gameManager.ResetCellState();
         _playText.text = "グライダー";
 
@@ -219,6 +233,8 @@ public class CreatePattern : MonoBehaviour
 
     public void SpaceShip()
     {
+        if (_gameManager.Rows != 15 && _gameManager.Columns != 32) { return; }
+
         _gameManager.ResetCellState();
         _playText.text = "宇宙船";
 

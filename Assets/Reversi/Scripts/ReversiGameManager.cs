@@ -194,6 +194,11 @@ public class ReversiGameManager : MonoBehaviour
         TryPut(tryPutPos, nextBoard, TryPutLeftLine);
     }
 
+    void TryPutUpperRight(Board target)
+    {
+        if (BOARD_SIZE_X <= target.BoardPosX + 1 || target) { }
+    }
+
     void TryPut(int tryPutPos, Board nextBoard, Action<Board> action)
     {
         if (_turn == BoardState.White)

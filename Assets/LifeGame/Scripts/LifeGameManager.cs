@@ -33,6 +33,8 @@ public class LifeGameManager : MonoBehaviour
 
     public LifeGameCell[,] Cells { get => _cells; set => _cells = value; }
     public bool IsPlay { get => _isPlay; set => _isPlay = value; }
+    public int Rows { get => _rows; set => _rows = value; }
+    public int Columns { get => _columns; set => _columns = value; }
 
     void Start()
     {
