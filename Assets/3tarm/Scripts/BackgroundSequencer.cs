@@ -2,41 +2,36 @@ using UnityEngine;
 
 public class BackgroundSequencer : MonoBehaviour
 {
-    [SerializeField]
+    [SerializeField, Tooltip("合成処理を行うクラス")]
     private BackGroundTranslator _backGroundTransitioner = default;
 
-    [SerializeField,]
-    Sprite[] _nextBackGroundImage = default;
+    [SerializeField, Header("表示するイラストの配列")]
+    Sprite[] _nextBackGroundImages = default;
 
     private int _currentIndex = -1;
-
-    void Start()
-    {
-     //   MoveNext();
-    }
 
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            //if (_backGroundTransitioner is { IsCompleted: false })
-            //{
-            //    _backGroundTransitioner.Skip();
-            //}
-            //else { MoveNext(); }
-
-            _backGroundTransitioner?.Play(_nextBackGroundImage[0]);
+            if (_backGroundTransitioner is { IsLerp: false })
+            {
+                BackGroundMoveNext();
+            }
+            else
+            {
+                _backGroundTransitioner.Skip();
+            }
         }
     }
 
-    private void MoveNext()
+    /// <summary>次の背景に切り替える</summary>
+    public void BackGroundMoveNext()
     {
-        //if (_colors is null or { Length: 0 }) { return; }
-
-        //if (_currentIndex + 1 < _colors.Length)
-        //{
-        //    _currentIndex++;
-        _backGroundTransitioner?.Play(_nextBackGroundImage[0]);
-        //}
+        if (_currentIndex + 1 < _nextBackGroundImages.Length)
+        {
+            _currentIndex++;
+            _backGroundTransitioner?.Play(_nextBackGroundImages[_currentIndex]);
+        }
     }
 }
