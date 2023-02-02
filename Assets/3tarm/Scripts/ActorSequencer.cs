@@ -19,7 +19,7 @@ public class ActorSequencer : MonoBehaviour
     {
         if (Input.GetButtonDown("Jump"))
         {
-            _actors[(int)ActorImagePosition.Center].ChangeCharacterImage(Characters.UnityChan, FaceSprites.Normal);
+            _actors[(int)ActorImagePosition.Center].UpdateFaceSprite(FaceSprites.Normal);
         }
     }
 
@@ -32,7 +32,7 @@ public class ActorSequencer : MonoBehaviour
     public void Appearance(Characters character, FaceSprites sprite, ActorImagePosition position, float appearanceTime, Action endAction = null)
     {
         var actor = _actors[(int)position];
-        actor.ChangeCharacterImage(character, sprite);
+        actor.SetFirstCharacterSprite(character, sprite);
         StartCoroutine(actor.FadeIn(appearanceTime, endAction));
     }
 }

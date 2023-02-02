@@ -7,8 +7,13 @@ using UnityEngine.UI;
 /// <summary>キャラクターの画像を操作するクラス </summary>
 public class Actor : MonoBehaviour
 {
-    [SerializeField]
-    private Image _image = default;
+    [SerializeField, Tooltip("イラストを表示させる画像")]
+    Image _image = default;
+
+    /// <summary>表示しているキャラクター</summary>
+    Characters _currentCharacter = default;
+    /// <summary>現在の表情</summary>
+    FaceSprites _currentFace = default;
 
     /// <summary>キャラクターを登場させる</summary>
     /// <param name="time">登場にかかる時間</param>
@@ -18,7 +23,7 @@ public class Actor : MonoBehaviour
         var color = _image.color;
         if (!_image.enabled) { _image.enabled = true; }
 
-        var elapsed = 0F;
+        var elapsed = 0f;
         while (elapsed < time)
         {
             elapsed += Time.deltaTime;
@@ -40,8 +45,7 @@ public class Actor : MonoBehaviour
     {
         var color = _image.color;
 
-        // color のアルファ値を徐々に 0 に近づける処理
-        var elapsed = 0F;
+        var elapsed = 0f;
         while (elapsed < time)
         {
             elapsed += Time.deltaTime;
@@ -55,12 +59,22 @@ public class Actor : MonoBehaviour
         yield return null;
     }
 
-    /// <summary>表示したいイラストを読み込み、イラストを変更する </summary>
-    /// <param name="character">どのキャラクターのイラストか</param>
+    /// <summary>キャラクターを登場させる時に呼び出す </summary>
+    /// <param name="character">どのキャラクターのイラストを表示するか</param>
     /// <param name="face">表示したい差分の添え字</param>
-    public void ChangeCharacterImage(Characters character, FaceSprites face)
+    public void SetFirstCharacterSprite(Characters character, FaceSprites face)
     {
         var diffSprite = Resources.Load<Sprite>($"Sprites/{character}/{face}");
+        _image.sprite = diffSprite;
+        _currentCharacter = character;
+        _currentFace = face;
+    }
+
+    /// <summary>表情を変更する </summary>
+    /// <param name="nextFace">次の表情</param>
+    public void UpdateFaceSprite(FaceSprites nextFace)
+    {
+        var diffSprite = Resources.Load<Sprite>($"Sprites/{_currentCharacter}/{nextFace}");
         _image.sprite = diffSprite;
     }
 }
