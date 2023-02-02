@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+
 
 /// <summary>キャラクターの画像を操作するクラス </summary>
 public class Actor : MonoBehaviour
@@ -8,11 +10,14 @@ public class Actor : MonoBehaviour
     [SerializeField]
     private Image _image = default;
 
-    public IEnumerator FadeIn(float time)
+    /// <summary>キャラクターを登場させる</summary>
+    /// <param name="time">登場にかかる時間</param>
+    /// <param name="endAction">終了処理</param>
+    public IEnumerator FadeIn(float time, Action endAction = null)
     {
         var color = _image.color;
+        if (!_image.enabled) { _image.enabled = true; }
 
-        // color のアルファ値を徐々に 1 に近づける処理
         var elapsed = 0F;
         while (elapsed < time)
         {
@@ -22,11 +27,15 @@ public class Actor : MonoBehaviour
             yield return null;
         }
 
+        endAction?.Invoke();
         color.a = 1;
         _image.color = color;
         yield return null;
     }
 
+
+    /// <summary>キャラクターを退場させる</summary>
+    /// <param name="time">退場にかかる時間</param>
     public IEnumerator FadeOut(float time)
     {
         var color = _image.color;
@@ -79,4 +88,13 @@ public enum Characters
     UnityChan = 0,
     Misaki = 1,
     Yuko = 2,
+}
+
+/// <summary>キャラクター登場・退場 </summary>
+public enum Fade
+{
+    /// <summary>登場 </summary>
+    FadeIn,
+    /// <summary>退場 </summary>
+    FadeOut,
 }
