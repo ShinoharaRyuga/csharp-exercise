@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>キャラクターの画像を操作するクラス </summary>
 public class Actor : MonoBehaviour
 {
     [SerializeField]
@@ -9,7 +10,6 @@ public class Actor : MonoBehaviour
 
     public IEnumerator FadeIn(float time)
     {
-        Debug.Log($"Actor FadeIn: time={time}", this);
         var color = _image.color;
 
         // color のアルファ値を徐々に 1 に近づける処理
@@ -29,7 +29,6 @@ public class Actor : MonoBehaviour
 
     public IEnumerator FadeOut(float time)
     {
-        Debug.Log($"Actor FadeOut: time={time}", this);
         var color = _image.color;
 
         // color のアルファ値を徐々に 0 に近づける処理
@@ -46,4 +45,38 @@ public class Actor : MonoBehaviour
         _image.color = color;
         yield return null;
     }
+
+    /// <summary>表示したいイラストを読み込み、イラストを変更する </summary>
+    /// <param name="character">どのキャラクターのイラストか</param>
+    /// <param name="face">表示したい差分の添え字</param>
+    public void ChangeCharacterImage(Characters character, FaceSprites face)
+    {
+        var diffSprite = Resources.Load<Sprite>($"Sprites/{character}/{face}");
+        _image.sprite = diffSprite;
+    }
+}
+
+/// <summary>表情差分</summary>
+public enum FaceSprites 
+{
+    /// <summary>通常 </summary>
+    Normal = 0,
+    /// <summary>自慢げ </summary>
+    Boast = 1,
+    /// <summary>怒り </summary>
+    Anger = 2,
+    /// <summary>驚き </summary>
+    Surprise = 3,
+    /// <summary>喜び </summary>
+    Joy = 4,
+    /// <summary>照れる </summary>
+    Shy = 5,
+}
+
+/// <summary>登場人物</summary>
+public enum Characters
+{
+    UnityChan = 0,
+    Misaki = 1,
+    Yuko = 2,
 }

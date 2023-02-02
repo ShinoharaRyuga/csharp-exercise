@@ -27,6 +27,7 @@ public class BackGroundTranslator : MonoBehaviour
     /// <summary>Ÿ‚É•\¦‚·‚é”wŒi‚ÌF</summary>
     Color _nextfrom;
 
+    /// <summary>Lerpˆ—‚ğs‚Á‚Ä‚¢‚é </summary>
     public bool IsLerp { get => _isLerp; }
 
     void Update()
