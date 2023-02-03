@@ -14,6 +14,8 @@ public class Actor : MonoBehaviour
     Characters _currentCharacter = default;
     /// <summary>現在の表情</summary>
     FaceSprites _currentFace = default;
+    /// <summary>フェードを行っているかどうか 行っていれば,どのフェードを行っているかを保持している</summary>
+    FadeMode _fadeMode = FadeMode.None;
 
     /// <summary>キャラクターを登場させる</summary>
     /// <param name="time">登場にかかる時間</param>
@@ -21,10 +23,12 @@ public class Actor : MonoBehaviour
     public IEnumerator FadeIn(float time, Action endAction = null)
     {
         var color = _image.color;
-        if (!_image.enabled) { _image.enabled = true; }
+        _fadeMode = FadeMode.FadeIn;
+
+        if (!_image.enabled) { _image.enabled = true; }     //imageが表示されていなければ表示する
 
         var elapsed = 0f;
-        while (elapsed < time)
+        while (elapsed < time && _fadeMode is FadeMode.FadeIn)
         {
             elapsed += Time.deltaTime;
             color.a = elapsed / time;
@@ -35,6 +39,7 @@ public class Actor : MonoBehaviour
         endAction?.Invoke();
         color.a = 1;
         _image.color = color;
+        _fadeMode = FadeMode.None;
         yield return null;
     }
 
@@ -44,9 +49,10 @@ public class Actor : MonoBehaviour
     public IEnumerator FadeOut(float time)
     {
         var color = _image.color;
+        _fadeMode = FadeMode.FadeOut;
 
         var elapsed = 0f;
-        while (elapsed < time)
+        while (elapsed < time && _fadeMode is FadeMode.FadeOut)
         {
             elapsed += Time.deltaTime;
             color.a = 1 - elapsed / time;
@@ -56,6 +62,7 @@ public class Actor : MonoBehaviour
 
         color.a = 0;
         _image.color = color;
+        _fadeMode = FadeMode.None;
         yield return null;
     }
 
@@ -76,6 +83,24 @@ public class Actor : MonoBehaviour
     {
         var diffSprite = Resources.Load<Sprite>($"Sprites/{_currentCharacter}/{nextFace}");
         _image.sprite = diffSprite;
+    }
+
+    public void Skip()
+    {
+        if (_fadeMode is FadeMode.FadeIn)
+        {
+            var color = _image.color;
+            color.a = 1;
+            _image.color = color; 
+        }
+        else if (_fadeMode is FadeMode.FadeOut)
+        {
+            var color = _image.color;
+            color.a = 0;
+            _image.color = color;
+        }
+
+        _fadeMode = FadeMode.None;
     }
 }
 
@@ -105,8 +130,10 @@ public enum Characters
 }
 
 /// <summary>キャラクター登場・退場 </summary>
-public enum Fade
+public enum FadeMode
 {
+    /// <summary>フェードを行っていない</summary>
+    None,
     /// <summary>登場 </summary>
     FadeIn,
     /// <summary>退場 </summary>

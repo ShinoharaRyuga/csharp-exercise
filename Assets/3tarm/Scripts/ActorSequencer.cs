@@ -12,14 +12,14 @@ public class ActorSequencer : MonoBehaviour
 
     private void Start()
     {
-        Appearance(Characters.UnityChan, FaceSprites.Anger, ActorImagePosition.Center, 2f, () => Debug.Log("ìoèÍ"));
+        Appearance(Characters.UnityChan, FaceSprites.Anger, ActorImagePosition.Center, 10f, () => Debug.Log("ìoèÍ"));
     }
 
     private void Update()
     {
         if (Input.GetButtonDown("Jump"))
         {
-            _actors[(int)ActorImagePosition.Center].UpdateFaceSprite(FaceSprites.Normal);
+            _actors[(int)ActorImagePosition.Center].Skip();
         }
     }
 
