@@ -4,11 +4,37 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
+interface IResult<T>
+{
+    /// <summary> 処理が終了したかどうか</summary>
+    bool IsCompleted { get; }
+
+    /// <summary>結果</summary>
+    T Result { get; }
+}
+
+/// <summary>結果を設定するクラス</summary>
+public class ResultClass<T> : IResult<T>
+{
+    public bool IsCompleted { get; private set; }
+
+    public T Result { get; private set; }
+
+    public void SetResult(T result)
+    {
+        Result = result;
+        IsCompleted = true;
+    }
+}
+
 /// <summary>キャラクターの画像を操作するクラス </summary>
 public class Actor : MonoBehaviour
 {
     [SerializeField, Tooltip("イラストを表示させる画像")]
     Image _image = default;
+
+    /// <summary>フェード処理の結果 </summary>
+    ResultClass<bool> _fadeResult;
 
     /// <summary>表示しているキャラクター</summary>
     Characters _currentCharacter = default;
@@ -17,10 +43,33 @@ public class Actor : MonoBehaviour
     /// <summary>フェードを行っているかどうか 行っていれば,どのフェードを行っているかを保持している</summary>
     FadeMode _fadeMode = FadeMode.None;
 
+    /// <summary>フェード処理の結果 </summary>
+    public bool FadeResult { get => _fadeResult.Result; }
+
+    public IEnumerator FadeRun(FadeMode mode, float time)
+    {
+        if (mode is FadeMode.FadeIn)
+        {
+            return FadeIn(time, out var _);
+        }
+        else 
+        {
+           return FadeOut(time);
+        }
+    }
+
+    IEnumerator FadeIn(float time, out IResult<bool> result)
+    {
+        var impl = new ResultClass<bool>();
+        var e = FadeIn(time, impl);
+        result = impl;
+        return e;
+    }
+
     /// <summary>キャラクターを登場させる</summary>
     /// <param name="time">登場にかかる時間</param>
     /// <param name="endAction">終了処理</param>
-    public IEnumerator FadeIn(float time, Action endAction = null)
+    public IEnumerator FadeIn(float time, ResultClass<bool> result)
     {
         var color = _image.color;
         _fadeMode = FadeMode.FadeIn;
@@ -36,7 +85,7 @@ public class Actor : MonoBehaviour
             yield return null;
         }
 
-        endAction?.Invoke();
+        result.SetResult(true);
         color.a = 1;
         _image.color = color;
         _fadeMode = FadeMode.None;
@@ -91,7 +140,7 @@ public class Actor : MonoBehaviour
         {
             var color = _image.color;
             color.a = 1;
-            _image.color = color; 
+            _image.color = color;
         }
         else if (_fadeMode is FadeMode.FadeOut)
         {
@@ -105,7 +154,7 @@ public class Actor : MonoBehaviour
 }
 
 /// <summary>表情差分</summary>
-public enum FaceSprites 
+public enum FaceSprites
 {
     /// <summary>通常 </summary>
     Normal = 0,
@@ -132,7 +181,7 @@ public enum Characters
 /// <summary>キャラクター登場・退場 </summary>
 public enum FadeMode
 {
-    /// <summary>フェードを行っていない</summary>
+    /// <summary>使用禁止 (フェードを行っていない)</summary>
     None,
     /// <summary>登場 </summary>
     FadeIn,

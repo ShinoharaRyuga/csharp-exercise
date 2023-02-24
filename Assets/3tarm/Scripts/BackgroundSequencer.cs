@@ -12,7 +12,7 @@ public class BackgroundSequencer : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetKeyDown(KeyCode.B))
         {
             if (_backGroundTransitioner is { IsLerp: false })
             {

@@ -19,7 +19,7 @@ public class FadeSequencer : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetKeyDown(KeyCode.N))
         {
             if (_colorTransitioner is { IsCompleted: false })
             {
